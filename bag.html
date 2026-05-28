@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Bag</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+    }
+
+    .cart-container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #007bff;
+    }
+
+    ol {
+      list-style: decimal inside;
+      padding: 0;
+      margin: 20px 0;
+    }
+
+    .cart-item {
+      background-color: #eaf4fc;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .cart-item:hover {
+      background-color: #d1ecf1;
+      transform: scale(1.02);
+    }
+
+    .cart-item span {
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .delete-btn:hover {
+      background-color: #c82333;
+    }
+
+    .total-price {
+      font-weight: bold;
+      font-size: 1.5rem;
+      margin-top: 20px;
+      text-align: right;
+      color: #28a745;
+    }
+
+    .empty-bag {
+      text-align: center;
+      font-style: italic;
+      color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+  <div class="cart-container">
+    <h1>Your Bag</h1>
+    <ol id="cart-items"></ol>
+    <p class="total-price">Total: $<span id="total-price">0.00</span></p>
+  </div>
+
+  <script>
+    // Retrieve cart items from localStorage
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartItemsContainer = document.getElementById('cart-items');
+    const totalPriceContainer = document.getElementById('total-price');
+
+    let totalPrice = 0;
+
+    // Function to render cart items
+    function renderCartItems() {
+      cartItemsContainer.innerHTML = ''; // Clear the cart container first
+
+      cart.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = 'cart-item';
+        li.innerHTML = `<span>${item.name}</span> - $${item.price} 
+                       <button class="delete-btn" onclick="deleteItem(${index})">Delete</button>`;
+        cartItemsContainer.appendChild(li);
+
+        // Calculate total price
+        totalPrice += parseFloat(item.price);
+      });
+
+      // Display total price
+      totalPriceContainer.textContent = totalPrice.toFixed(2);
+    }
+
+    // Function to delete an item
+    function deleteItem(index) {
+      // Remove the item from the cart array
+      cart.splice(index, 1);
+
+      // Save the updated cart back to localStorage
+      localStorage.setItem('cart', JSON.stringify(cart));
+
+      // Re-render the cart items and total price
+      renderCartItems();
+    }
+
+    // Handle empty cart
+    if (cart.length === 0) {
+      cartItemsContainer.innerHTML = '<p class="empty-bag">Your bag is empty!</p>';
+    } else {
+      renderCartItems();
+    }
+  </script>
+</body>
+</html>
